@@ -1,0 +1,16 @@
+{  
+    "name": "gene",
+    "title": "GENE",
+    "id": "gene@melalawi.com",
+    "description": "",
+    "author": "melalawi",
+    "license": "MPL 2.0",
+    "version": "0.1",
+
+    "preferences": [{  
+        "type": "control",
+        "label": "Modify Settings",
+        "name": "accessSettings",
+        "title": "Settings"
+    }]
+}
