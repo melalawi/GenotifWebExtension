@@ -16,6 +16,9 @@
 	top: -28000px;
 	display: none;
 
+    transition: opacity .2s ease-out;
+    opacity: 0.4 !important;
+
 	max-width: 280px;
 	min-width: 50px;
 
@@ -26,6 +29,10 @@
 
 	box-shadow: none;
 	padding: 0;
+}
+
+.qtip:hover {
+    opacity: 0.9 !important;
 }
 
 	.qtip-content{

@@ -4,7 +4,7 @@
     "name": "GENE",
     "short_name": "GENE",
     "description": "",
-    "version": "0.1001",
+    "version": "0.1002",
 	
     "background": {
         "scripts": ["./lib/deferred.js", "./lib/background.js", "./lib/chromeBackground.js"],

@@ -2,8 +2,8 @@ var GTE_SCRIPT = (function () {
 
 "use strict";
 
-var qTip,
-    previousRange;
+var previousRange,
+    qTip;
 
 function ContentScript(browserAdaptor) {
     var adaptor = browserAdaptor,
@@ -72,8 +72,10 @@ function ContentScript(browserAdaptor) {
                 fixed: true
             },
             events: {
-                hidden: function (event, api) {
+                hide: function (event, api) {
+                    api.destroy(true);
                     qTip.remove();
+                    qTip = null;
                 }
             },
 
@@ -97,23 +99,17 @@ function getNewRange() {
         //if anything is selected
         if (window.getSelection().rangeCount) {
             //Only want the first 'range' selected (ie if multiple groups of text are selected)
-            var selection = new HighlightedRange(window.getSelection().getRangeAt(0));
+            var range = new HighlightedRange(window.getSelection().getRangeAt(0));
 
-            //If this selection is new (ie user didnt simply reselect the same text)
-            if (selection.equalTo(previousRange) === false) {
-                previousRange = selection;
-
-                result = selection;
+            if (range.getString() && range.equalTo(previousRange) === false) {
+                result = range;
             }
+
+            previousRange = range;
         }
     }
 
     return result;
-}
-
-function rangeEqualityTest(rangeOne, rangeTwo) {
-    return rangeOne.compareBoundaryPoints(Range.START_TO_START, rangeTwo) === 0 &&
-           rangeOne.compareBoundaryPoints(Range.END_TO_END, rangeTwo) === 0;
 }
 
 //custom range object
