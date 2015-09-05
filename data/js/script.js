@@ -2,7 +2,8 @@ var GTE_SCRIPT = (function () {
 
 "use strict";
 
-var previousRange;
+var qTip,
+    previousRange;
 
 function ContentScript(browserAdaptor) {
     var adaptor = browserAdaptor,
@@ -14,68 +15,137 @@ function ContentScript(browserAdaptor) {
 
             //wait for text highlight
             $(document).mouseup(function(){
-                var highlighedText = nextHighlightedText();
+                var highlightedRange = getNewRange();
 
-                if (highlighedText) {
-                    processHighlightedText(highlighedText);
+                if (highlightedRange) {
+                    processHighlightedRange(highlightedRange);
                 }
             });
         }
     };
 
-    function processHighlightedText(text) {
-        //split string by whitespace
-        var splitArray = text.trim().split(/\s+/);
+    function processHighlightedRange(range) {
+        //split string by whitespace and non-alphanumeric characters
+        var text = range.getString(),
+            splitArray = text.trim().split(/\s+|\W+/);
 
         //remove empty strings
         splitArray = splitArray.filter(Boolean);
 
-        //check the first entry for a match
-        testGeneID(splitArray[0]);
-    }
+        if (splitArray.length) {
+            //check the first entry for a match (lowercase-ify the string for case-insensitive matching)
+            text = splitArray[0].toLowerCase();
 
-    function testGeneID(id) {
-        if (id) {
-            if (geneDatabase.hasOwnProperty(id)) {
-                var geneID = geneDatabase[id];
-
-                adaptor.sendMessage('geneRequest:' + geneID, geneDatabase[id], generatePopup)
+            //if found
+            if (geneDatabase.hasOwnProperty(text)) {
+                generatePopup(range, geneDatabase[text]);
             }
         }
     }
 
-    function generatePopup(details) {
-        //todo: actually generate a popup, loading indicator
-        console.log(details);
+    function generatePopup(range, gene) {
+        resetQTip(range, gene);
+
+        adaptor.sendMessage('geneRequest:' + gene, gene, function(response){
+            var api = qTip.qtip('api');
+
+            api.set('content.text', response);
+        });
+    }
+
+    function resetQTip(range, text) {
+        //destroy previous
+        if (qTip) {
+            qTip.remove();
+        }
+
+        qTip = $('<div >', {class: 'qtip-gene-container'}).css(range.getEndOfRange());
+
+        $(document.body).append(qTip);
+
+        //generate qTip
+        qTip.qtip({
+            //show by default, hide when user clicks outside of the tooltip
+            show: { ready: true },
+            hide: {
+                event: 'unfocus',
+                fixed: true
+            },
+            events: {
+                hidden: function (event, api) {
+                    qTip.remove();
+                }
+            },
+
+            content: {
+                title: text,
+                text: text
+            },
+            position: {
+                my: 'top left',  // Position my top left...
+                at: 'bottom right', // at the bottom right of...
+                target: qTip // x, y
+            }
+        });
     }
 }
 
-function nextHighlightedText() {
-    var text;
+function getNewRange() {
+    var result;
 
     if (typeof window.getSelection !== "undefined") {
+        //if anything is selected
         if (window.getSelection().rangeCount) {
             //Only want the first 'range' selected (ie if multiple groups of text are selected)
-            var selection = window.getSelection().getRangeAt(0);
+            var selection = new HighlightedRange(window.getSelection().getRangeAt(0));
 
-            //if anything is selected
-            if (selection.startOffset < selection.endOffset) {
-                //If this selection is new (ie user didnt simply reselect the same text)
-                if (!previousRange || rangeEqualityTest(previousRange, selection) === false) {
-                    previousRange = selection;
+            //If this selection is new (ie user didnt simply reselect the same text)
+            if (selection.equalTo(previousRange) === false) {
+                previousRange = selection;
 
-                    text = selection.toString();
-                }
+                result = selection;
             }
         }
     }
 
-    return text;
+    return result;
 }
 
 function rangeEqualityTest(rangeOne, rangeTwo) {
     return rangeOne.compareBoundaryPoints(Range.START_TO_START, rangeTwo) === 0 &&
            rangeOne.compareBoundaryPoints(Range.END_TO_END, rangeTwo) === 0;
+}
+
+//custom range object
+function HighlightedRange(range) {
+    var selectionRange = range,
+        rangeRect = selectionRange.getBoundingClientRect();
+
+    this.getRange = function() { return selectionRange; };
+    this.getString = function() { return selectionRange.toString(); };
+
+    this.equalTo = function(hRange) {
+        var result = false;
+
+        if (hRange instanceof HighlightedRange) {
+            var secondRange = hRange.getRange();
+
+            result = selectionRange.compareBoundaryPoints(Range.START_TO_START, secondRange) === 0 &&
+                     selectionRange.compareBoundaryPoints(Range.END_TO_END, secondRange) === 0;
+        }
+
+        return result;
+    };
+
+    this.getEndOfRange = function() {
+        var rangeRect = range.getBoundingClientRect(),
+            documentRect = document.documentElement.getBoundingClientRect();
+
+        return {
+            top: rangeRect.bottom - documentRect.top,
+            left: rangeRect.left - documentRect.left
+        };
+    };
 }
 
 return {
