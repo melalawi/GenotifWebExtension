@@ -13,9 +13,9 @@ Googling a gene every few minutes just to get a basic summary while gets old, do
 -Suggestions for additional features welcome.
 
 ## Dependencies
--[jQuery v2.1.4](https://jquery.com/)
+[jQuery v2.1.4](https://jquery.com/)
 
--[qTip2 v2.2.1](http://qtip2.com/)
+[qTip2 v2.2.1](http://qtip2.com/)
 
 ## Contact Info
 
