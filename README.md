@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Googling a gene every few minutes just to get a basic summary while gets old, doesn't it? This extension alleviates that annoyance by allowing for convenient, in-text referencing of gene symbols. All you have to do is highlight a human gene symbol. The extension will then check Gencode 19 human gene annotations to determine the UniProt ID for the gene. Basic information such as the full gene name and protein function are pulled from the UniProtKB database and displayed in a small blurb above the highlighted gene symbol within about a second. 
+Googling a gene every few minutes just to get a basic summary gets old, doesn't it? This extension alleviates that annoyance by allowing for convenient, in-text referencing of gene symbols. All you have to do is highlight a human gene symbol. The extension will then check Gencode 19 human gene annotations to determine the UniProt ID for the gene. Basic information such as the full gene name and protein function are pulled from the UniProtKB database and displayed in a small blurb above the highlighted gene symbol within about a second. 
 
 ## Future Additions
 
