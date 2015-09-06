@@ -11,6 +11,8 @@
         "persistent": true
     },
 
+    "web_accessible_resources": ["data/images/loading.gif"],
+
     "permissions": [
         "activeTab",
         "tabs",

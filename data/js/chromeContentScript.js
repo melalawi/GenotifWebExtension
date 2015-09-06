@@ -2,11 +2,15 @@
 
 "use strict";
 
-var messageListeners = [],
+var messageListeners = {},
     contentScript,
     adaptor;
 
 adaptor = {
+    localDirectory: function(path) {
+        return chrome.extension.getURL('data/' + path);
+    },
+
     sendMessage: function(message, data, onResponse) {
         oneTimeMessage(message, onResponse);
 
@@ -22,27 +26,18 @@ function initialize(settings) {
 function oneTimeMessage(message, callback) {
     var onReceived = function(response) {
         if (response.message === message) {
-            callback(response.data);
+            chrome.runtime.onMessage.removeListener(messageListeners[message]);
+            delete messageListeners[message];
 
-            chrome.runtime.onMessage.removeListener(onReceived);
-            messageListeners.splice(messageListeners.indexOf(onReceived), 1);
+            callback(response.data);
         }
     };
 
-    messageListeners.push(onReceived);
+    messageListeners[message] = onReceived;
 
-    chrome.runtime.onMessage.addListener(onReceived);
+    chrome.runtime.onMessage.removeListener(messageListeners[message]);
+    chrome.runtime.onMessage.addListener(messageListeners[message]);
 }
 
 oneTimeMessage('geneData', initialize);
-/*
-//only listen once
-messageListener = function(message) {
-    initialize(message);
-
-    chrome.runtime.onMessage.removeListener(messageListener);
-};
-
-chrome.runtime.onMessage.addListener(messageListener);
-*/
 })();

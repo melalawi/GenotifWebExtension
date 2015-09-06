@@ -2,6 +2,9 @@ var GTE_SCRIPT = (function () {
 
 "use strict";
 
+const GENE_NAME_SELECTOR = 'protein>recommendedName>fullName';
+const GENE_FUNCTION_SELECTOR = 'comment[type="function"]';
+
 var previousRange,
     qTip;
 
@@ -46,11 +49,27 @@ function ContentScript(browserAdaptor) {
     function generatePopup(range, gene) {
         resetQTip(range, gene);
 
-        adaptor.sendMessage('geneRequest:' + gene, gene, function(response){
-            var api = qTip.qtip('api');
+        setTimeout(function(){
+            adaptor.sendMessage('geneRequest:' + gene, gene, function(response){
+                var api = qTip.qtip('api'),
+                    formattedText = parseGeneXML(response);
 
-            api.set('content.text', response);
-        });
+
+                api.set(formattedText);
+            });
+        }, 250);
+    }
+
+    function parseGeneXML(text) {
+        var parsedXML = $($.parseXML(text)),
+            titleNode = parsedXML.find(GENE_NAME_SELECTOR),
+            summaryNode = parsedXML.find(GENE_FUNCTION_SELECTOR),
+            result = {};
+
+        result['content.title'] = titleNode.text().trim();
+        result['content.text'] = summaryNode.length ? '<b>Function:</b> ' + summaryNode.text().trim() : 'No summary in UniProt.';
+
+        return result;
     }
 
     function resetQTip(range, text) {
@@ -65,28 +84,33 @@ function ContentScript(browserAdaptor) {
 
         //generate qTip
         qTip.qtip({
+            style: { classes: 'qtip-gene' },
+
             //show by default, hide when user clicks outside of the tooltip
             show: { ready: true },
+
             hide: {
                 event: 'unfocus',
                 fixed: true
             },
+
             events: {
                 hide: function (event, api) {
-                    api.destroy(true);
+                    api.destroy();
                     qTip.remove();
                     qTip = null;
                 }
             },
 
             content: {
-                title: text,
-                text: text
+                text: '<img src="' + adaptor.localDirectory('images/loading.gif') + '">'
             },
+
             position: {
-                my: 'top left',  // Position my top left...
-                at: 'bottom right', // at the bottom right of...
-                target: qTip // x, y
+                my: 'bottom center',
+                at: 'top center',
+                target: qTip,
+                viewport: $(window)
             }
         });
     }
@@ -103,9 +127,10 @@ function getNewRange() {
 
             if (range.getString() && range.equalTo(previousRange) === false) {
                 result = range;
+                previousRange = range;
+            } else {
+                previousRange = null;
             }
-
-            previousRange = range;
         }
     }
 
@@ -138,7 +163,7 @@ function HighlightedRange(range) {
             documentRect = document.documentElement.getBoundingClientRect();
 
         return {
-            top: rangeRect.bottom - documentRect.top,
+            top: rangeRect.top - documentRect.top,
             left: rangeRect.left - documentRect.left
         };
     };
