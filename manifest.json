@@ -3,8 +3,8 @@
 
     "name": "GENE",
     "short_name": "GENE",
-    "description": "",
-    "version": "0.1002",
+    "description": "This extension allows for in-text referencing of gene symbols.",
+    "version": "1.0",
 	
     "background": {
         "scripts": ["./lib/deferred.js", "./lib/background.js", "./lib/chromeBackground.js"],
@@ -16,7 +16,6 @@
     "permissions": [
         "activeTab",
         "tabs",
-        "storage",
         "http://*/",
         "https://*/"
     ]
