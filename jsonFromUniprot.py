@@ -29,7 +29,7 @@ def jsonify(textFileName):
 					nextData = jsonifyGeneEntry(nextLine)
 					if not nextLine == None and not nextData == None:
 						jsonFile.write(nextData + ',\n')
-					nextLine = line
+					nextLine = line.strip()
 			
 			# We are done, process last line and close the JSON file with a }
 			nextData = jsonifyGeneEntry(nextLine)
@@ -67,8 +67,8 @@ def jsonifyGeneEntry(textLine):
 
 	geneData = textLine.split("\t")
 	geneNames = geneData[4]
-	
-	if geneNames is None:
+
+	if geneNames == "":
 		return None
 	else:
 		gene = geneNames.split()[0]
