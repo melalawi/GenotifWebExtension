@@ -58,7 +58,8 @@ def openJSONFile(fileName):
 # Splits string into two (tab character), then JSONifies the line by adding quotation marks and all that jazz
 def jsonifyGeneEntry(textLine):
 	geneData = textLine.split("\t")
-	gene = geneData[4].split()[0]
+	geneNames = geneData[4]
+	gene = geneNames.split()[0]
 	
 	#geneData[0] is set to lower case for case-insensitive matching
 	return '\t"' + gene.lower() + '":"' + geneData[0] + '"'
