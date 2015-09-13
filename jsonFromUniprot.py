@@ -24,13 +24,17 @@ def jsonify(textFileName):
 			# JSON is finicky in that every line should end with a comma unless it's the last one, so the reader reads one line ahead.
 			with open(textFileName, 'r') as textFile:
 				header = textFile.readline()
+				
 				for line in textFile:
-					if not nextLine == None:
-						jsonFile.write(jsonifyGeneEntry(nextLine) + ',\n')
+					nextData = jsonifyGeneEntry(nextLine)
+					if not nextLine == None and not nextData == None:
+						jsonFile.write(nextData + ',\n')
 					nextLine = line
 			
 			# We are done, process last line and close the JSON file with a }
-			jsonFile.write(jsonifyGeneEntry(nextLine) + '\n}')
+			nextData = jsonifyGeneEntry(nextLine)
+			if nextData is not None:
+				jsonFile.write(nextData + '\n}')
 			
 			jsonFile.close()
 			
@@ -59,10 +63,14 @@ def openJSONFile(fileName):
 def jsonifyGeneEntry(textLine):
 	geneData = textLine.split("\t")
 	geneNames = geneData[4]
-	gene = geneNames.split()[0]
+	if geneNames is None:
+		return None
+	else:
+		gene = geneNames.split()[0]
 	
-	#geneData[0] is set to lower case for case-insensitive matching
-	return '\t"' + gene.lower() + '":"' + geneData[0] + '"'
+		#geneData[0] is set to lower case for case-insensitive matching
+		return '\t"' + gene.lower() + '":"' + geneData[0] + '"'
+	
 
 # Starts here. User must provide textFile as Argument 1
 if len(sys.argv) < 2:
