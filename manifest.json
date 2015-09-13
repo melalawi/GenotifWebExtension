@@ -1,10 +1,10 @@
 {
     "manifest_version": 2,
 
-    "name": "GENE",
-    "short_name": "GENE",
+    "name": "Genotify",
+    "short_name": "Genotify",
     "description": "This extension allows for in-text referencing of gene symbols.",
-    "version": "1.0",
+    "version": "1.1",
 	
     "background": {
         "scripts": ["./lib/deferred.js", "./lib/background.js", "./lib/chromeBackground.js"],

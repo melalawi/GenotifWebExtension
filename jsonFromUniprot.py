@@ -23,6 +23,7 @@ def jsonify(textFileName):
 			# Looping through lines and stuff
 			# JSON is finicky in that every line should end with a comma unless it's the last one, so the reader reads one line ahead.
 			with open(textFileName, 'r') as textFile:
+				header = textFile.readline()
 				for line in textFile:
 					if not nextLine == None:
 						jsonFile.write(jsonifyGeneEntry(nextLine) + ',\n')
@@ -57,9 +58,10 @@ def openJSONFile(fileName):
 # Splits string into two (tab character), then JSONifies the line by adding quotation marks and all that jazz
 def jsonifyGeneEntry(textLine):
 	geneData = textLine.split("\t")
+	gene = geneData[4].split()[0]
 	
 	#geneData[0] is set to lower case for case-insensitive matching
-	return '\t"' + geneData[3].lower() + '":"' + geneData[0] + '"'
+	return '\t"' + gene.lower() + '":"' + geneData[0] + '"'
 
 # Starts here. User must provide textFile as Argument 1
 if len(sys.argv) < 2:
