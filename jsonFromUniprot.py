@@ -11,6 +11,9 @@
 import os
 import sys
 
+#Hold genes to skip repeats
+geneList = []
+
 # Open source file, iterates through each line, converts the line into the JSON equivalent, writes to new file, repeat until done
 def jsonify(textFileName):
 	try:
@@ -72,9 +75,13 @@ def jsonifyGeneEntry(textLine):
 		return None
 	else:
 		gene = geneNames.split()[0]
-	
-		#geneData[0] is set to lower case for case-insensitive matching
-		return '\t"' + gene.lower() + '":"' + geneData[0] + '"'
+
+		if gene in geneList:
+			return None
+		else:
+			geneList.append(gene)
+			#geneData[0] is set to lower case for case-insensitive matching
+			return '\t"' + gene.lower() + '":"' + geneData[0] + '"'
 	
 
 # Starts here. User must provide textFile as Argument 1
