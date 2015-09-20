@@ -10,11 +10,13 @@ var previousRange,
 
 function ContentScript(browserAdaptor) {
     var adaptor = browserAdaptor,
-        geneDatabase;
+        selectedOrganism,
+        geneDatabases;
 
-    this.initialize = function(genes) {
-        if (genes) {
-            geneDatabase = genes;
+    this.initialize = function(extensionSettings) {
+        if (extensionSettings) {
+            geneDatabases = extensionSettings.geneJSONs;
+            selectedOrganism = extensionSettings.settings.selectedOrganism;
 
             //wait for text highlight
             $(document).mouseup(function(){
@@ -25,6 +27,10 @@ function ContentScript(browserAdaptor) {
                 }
             });
         }
+    };
+    
+    this.changeSelectedOrganism = function(extensionSettings) {
+        selectedOrganism = extensionSettings.settings.selectedOrganism;
     };
 
     function processHighlightedRange(range) {
@@ -40,8 +46,8 @@ function ContentScript(browserAdaptor) {
             text = splitArray[0].toLowerCase();
 
             //if found
-            if (geneDatabase.hasOwnProperty(text)) {
-                generatePopup(range, geneDatabase[text]);
+            if (geneDatabases[selectedOrganism].hasOwnProperty(text)) {
+                generatePopup(range, geneDatabases[selectedOrganism][text]);
             }
         }
     }

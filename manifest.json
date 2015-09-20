@@ -14,6 +14,7 @@
     "web_accessible_resources": ["data/images/loading.gif"],
 
     "permissions": [
+        "storage",
         "activeTab",
         "tabs",
         "http://*/",
@@ -21,8 +22,8 @@
     ],
 	
 	"browser_action": {
-    "default_icon": "data/images/Icon.png",
-    "default_popup": "data/html/options.html",
-    "default_title": "Genotify Options"
+        "default_icon": "data/images/Icon.png",
+        "default_popup": "data/html/options.html",
+        "default_title": "Genotify Options"
 	}
 }

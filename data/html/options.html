@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html>
-	<script type="text/javascript" src="data/js/options.js"></script>
-  <body style="width: 190px" onload="loadOptions()">
-  <b>Organism:</b>
-    <select name="organism" onchange="saveOptions()">
-		<option value="human">H. sapiens</option>
-		<option value="arabidopsis">A. thaliana</option>
-		<option value="drosphila">D. melanogaster</option>
-		<option value="mouse">M. musculus</option>
-		<option value="rice">O. sativa</option>
-		<option value="celegans">C. elegans</option>
-		<option value="yeast">S. cerevisiae</option>
-		<option value="zebrafish">D. rerio</option>
-	</select>
-  </body>
+    <head>
+        <script type="text/javascript" src="../js/jquery-2.1.4.min.js"></script>
+        <script type="text/javascript" src="../js/options.js"></script>
+    </head>
+    <body style="width: 190px">
+        <b>Organism:</b>
+        
+        <select id="organismSelector" name="organism">
+            <option value="humanGenes.json">H. sapiens</option>
+            <option value="arabidopsisGenes.json">A. thaliana</option>
+            <option value="drosphilaGenes.json">D. melanogaster</option>
+            <option value="mouseGenes.json">M. musculus</option>
+            <option value="riceGenes.json">O. sativa</option>
+            <option value="celegansGenes.json">C. elegans</option>
+            <option value="yeastGenes.json">S. cerevisiae</option>
+            <option value="zebrafishGenes.json">D. rerio</option>
+        </select>
+    </body>
 </html>

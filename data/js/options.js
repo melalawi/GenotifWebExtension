@@ -1,21 +1,23 @@
+(function(){
+    
+"use strict";
+
 var defaultOrganism = "human";
 
+$(document).ready(function(){
+    loadOptions();
+});
+
 function loadOptions() {
-	var useOrganism = localStorage["useOrganism"];
-
-	var select = document.getElementById("color");
-	for (var i = 0; i < select.children.length; i++) {
-		var child = select.children[i];
-			if (child.value == useOrganism) {
-			child.selected = "true";
-			break;
-		}
-	}
+	var selector = $('#organismSelector');
+    
+    chrome.runtime.sendMessage({message: 'getExtensionSettings'}, function(response) {
+        selector.val(response.settings.selectedOrganism);
+    });
+    
+    selector.on('change', function() {
+        chrome.extension.sendMessage({message: 'organismChange', data: this.value});
+    });
 }
 
-function saveOptions() {
-	var select = document.getElementById("organism");
-	var organism = select.children[select.selectedIndex].value;
-	console.log(organism)
-	localStorage["useOrganism"] = organism;
-}
+}());
