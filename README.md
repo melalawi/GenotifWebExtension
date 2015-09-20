@@ -2,13 +2,13 @@
 
 ## Purpose
 
-Googling a gene every few minutes just to get a basic summary gets old, doesn't it? This extension alleviates that annoyance by allowing for convenient, in-text referencing of gene symbols. All you have to do is highlight a human gene symbol. The extension will then check Gencode 19 human gene annotations to determine the UniProt ID for the gene. Basic information such as the full gene name and protein function are pulled from the UniProtKB database and displayed in a small blurb above the highlighted gene symbol within about a second. 
+Googling a gene every few minutes just to get a basic summary gets old, doesn't it? This extension alleviates that annoyance by allowing for convenient, in-text referencing of gene symbols. All you have to do is highlight a human gene symbol. The extension will then query UniProtKB and pull basic information such as the full gene name and protein function are pulled and displayed in a small blurb above the highlighted gene symbol within about a second. Only reviewed genes are included for now.
 
 ## Future Additions
 
--User-defined fields for display. UniProt includes much more information than simply the gene name and protein function. We hope to allow users to select what information they'd like to see soon.
+-User-defined fields for display. UniProt often includes much more information than simply the full name and protein function for a given gene. We hope to allow users to select what information they'd like to see soon.
 
--May try to expand to other organisms (mouse, yeast, worms, etc) if it seems the demand is there.
+-May try to expand to other organisms (mouse, yeast, worms, etc) if it seems the demand is there. Done for chrome, in-progress for firefox version.
 
 -Suggestions for additional features welcome.
 
@@ -23,13 +23,8 @@ E-mail Jared (jared.andrews07@gmail.com) or Mohamed (mohamed.y.elalawi@gmail.com
 
 ## References
 
-Thanks to UniProt and Gencode for existing:
+Thanks to UniProt for existing:
 
 The UniProt Consortium
 UniProt: a hub for protein information
 Nucleic Acids Res. 43: D204-D212 (2015).
-
-GENCODE: the reference human genome annotation for The ENCODE Project.
-Harrow J et al.
-Genome research 2012;22;9;1760-74
-PUBMED: 22955987; PMC: 3431492; DOI: 10.1101/gr.135350.111
