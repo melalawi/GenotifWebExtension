@@ -5,16 +5,28 @@ var GTE_SCRIPT = (function () {
 const GENE_NAME_SELECTOR = 'protein>recommendedName>fullName';
 const GENE_FUNCTION_SELECTOR = 'comment[type="function"]';
 
+const PROBLEM_CHARS = {
+    '&': '&amp;',
+    '\<': '&lt;',
+    '\>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+};
+
+const PROBLEM_REGEX = new RegExp(Object.keys(PROBLEM_CHARS).join("|"), "gi");
+
 var previousRange,
     qTip;
 
 function ContentScript(browserAdaptor) {
     var adaptor = browserAdaptor,
-        geneDatabase;
+        selectedOrganism,
+        geneDatabases;
 
-    this.initialize = function(genes) {
-        if (genes) {
-            geneDatabase = genes;
+    this.initialize = function(extensionSettings) {
+        if (extensionSettings) {
+            geneDatabases = extensionSettings.geneJSONs;
+            selectedOrganism = extensionSettings.settings.selectedOrganism;
 
             //wait for text highlight
             $(document).mouseup(function(){
@@ -26,11 +38,15 @@ function ContentScript(browserAdaptor) {
             });
         }
     };
+    
+    this.changeSelectedOrganism = function(extensionSettings) {
+        selectedOrganism = extensionSettings.settings.selectedOrganism;
+    };
 
     function processHighlightedRange(range) {
         //split string by whitespace and non-alphanumeric characters
         var text = range.getString(),
-            splitArray = text.trim().split(/\s+|\W+/);
+            splitArray = text.trim().split(/\s+|\,+\"+/);
 
         //remove empty strings
         splitArray = splitArray.filter(Boolean);
@@ -40,8 +56,8 @@ function ContentScript(browserAdaptor) {
             text = splitArray[0].toLowerCase();
 
             //if found
-            if (geneDatabase.hasOwnProperty(text)) {
-                generatePopup(range, geneDatabase[text]);
+            if (geneDatabases[selectedOrganism].hasOwnProperty(text)) {
+                generatePopup(range, geneDatabases[selectedOrganism][text]);
             }
         }
     }
@@ -66,8 +82,8 @@ function ContentScript(browserAdaptor) {
             summaryNode = parsedXML.find(GENE_FUNCTION_SELECTOR),
             result = {};
 
-        result['content.title'] = titleNode.text().trim();
-        result['content.text'] = summaryNode.length ? '<b>Function:</b> ' + summaryNode.text().trim() : 'No summary in UniProt.';
+        result['content.title'] = simpleHtmlSanitizer(titleNode.text().trim());
+        result['content.text'] = summaryNode.length ? '<b>Function:</b> ' + simpleHtmlSanitizer(summaryNode.text().trim()) : 'No summary in UniProt.';
 
         return result;
     }
@@ -114,6 +130,12 @@ function ContentScript(browserAdaptor) {
             }
         });
     }
+}
+
+function simpleHtmlSanitizer(htmlSrc) {
+    return htmlSrc.replace(PROBLEM_REGEX, function(matched){
+        return PROBLEM_CHARS[matched];
+    });
 }
 
 function getNewRange() {

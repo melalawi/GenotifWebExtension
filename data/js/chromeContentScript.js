@@ -21,6 +21,12 @@ adaptor = {
 function initialize(settings) {
     contentScript = new GTE_SCRIPT.ContentScript(adaptor);
     contentScript.initialize(settings);
+    
+    chrome.runtime.onMessage.addListener(function(response, sender) {
+        if (response.message === 'organismChange') {
+            contentScript.changeSelectedOrganism(response.data);
+        }
+    });
 }
 
 function oneTimeMessage(message, callback) {
@@ -39,5 +45,5 @@ function oneTimeMessage(message, callback) {
     chrome.runtime.onMessage.addListener(messageListeners[message]);
 }
 
-oneTimeMessage('geneData', initialize);
+oneTimeMessage('extensionSettings', initialize);
 })();
